@@ -26,7 +26,7 @@ export const AiNewsWidget: React.FC = () => {
   }, []);
 
   return (
-    <div className="dark:bg-slate-900/50 bg-white backdrop-blur-sm border dark:border-slate-700/50 border-slate-200/80 rounded-2xl shadow-xl p-6 mb-8 animated-glow">
+    <div className="dark:bg-slate-900/30 bg-white/30 backdrop-filter backdrop-blur-xl border dark:border-slate-700/50 border-slate-200/80 rounded-2xl shadow-xl p-6 mb-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold dark:text-[#28c780] text-[#1f9a65]">هەواڵەکانی تەکنەلۆژیا و بازاڕگەری</h2>
         <button onClick={fetchNews} disabled={isLoading} className="dark:text-slate-400 text-slate-600 dark:hover:text-white hover:text-slate-950 transition-colors disabled:opacity-50" aria-label="Refresh news">
@@ -40,7 +40,7 @@ export const AiNewsWidget: React.FC = () => {
       {!isLoading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {newsItems.map((item, index) => (
-            <div key={index} className="dark:bg-slate-800/40 bg-white p-4 rounded-lg border dark:border-slate-700 border-slate-200">
+            <div key={index} className="dark:bg-slate-800/40 bg-white/40 p-4 rounded-lg border dark:border-slate-700 border-slate-200">
                 <h3 className="font-bold dark:text-[#28c780] text-[#1f9a65] mb-2">{item.headline}</h3>
                 <p className="dark:text-slate-300 text-slate-700 text-sm">{item.summary}</p>
             </div>

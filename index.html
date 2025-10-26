@@ -34,70 +34,99 @@
         --border-color: #e2e8f0;
       }
       
-      @media (prefers-color-scheme: dark) {
-        :root {
-          /* Dark Theme (Enhanced Black) */
-          --bg-primary: #000000; 
-          --bg-secondary: #121212; 
-          --bg-tertiary: #1c1c1c; 
-          --bg-interactive: #2a2a2a; 
-          --text-primary: #f0f0f0;
-          --text-secondary: #a0a0a0;
-          --text-accent: #28c780;
-          --text-accent-contrast: #ffffff;
-          --border-color: #2a2a2a;
-        }
-        
-        html {
-          background-color: #000;
-        }
-        
-        body {
-            background-color: transparent;
-            color: var(--text-primary);
-        }
+      html:not(.dark) .light-bg-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+          background: linear-gradient(-45deg, #e0f2f1, #e8f5e9, #f3e5f5, #e3f2fd);
+          background-size: 400% 400%;
+          animation: gradient 15s ease infinite;
+      }
+      
+      @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
 
-        .orb-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+      html.dark :root {
+        /* Dark Theme (Enhanced Black) */
+        --bg-primary: #000000; 
+        --bg-secondary: #121212; 
+        --bg-tertiary: #1c1c1c; 
+        --bg-interactive: #2a2a2a; 
+        --text-primary: #f0f0f0;
+        --text-secondary: #a0a0a0;
+        --text-accent: #28c780;
+        --text-accent-contrast: #ffffff;
+        --border-color: #2a2a2a;
+      }
+      
+      html.dark .light-bg-container {
+          display: none;
+      }
 
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.5;
-            animation: pulse 4s ease-in-out infinite;
-        }
+      html.dark {
+        background-color: #000;
+      }
+      
+      html.dark body {
+          background-color: transparent;
+          color: var(--text-primary);
+      }
 
-        .orb-green {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #39FF14 0%, rgba(57, 255, 20, 0.4) 40%, transparent 70%);
-            animation: float-green 15s ease-in-out infinite, pulse 2.5s ease-in-out infinite;
-        }
+      html.dark .orb-container {
+          display: block;
+      }
+      
+      html:not(.dark) .orb-container {
+          display: none;
+      }
 
-        .orb-purple {
-            width: 550px;
-            height: 550px;
-            background: radial-gradient(circle, #A020F0 0%, rgba(160, 32, 240, 0.4) 40%, transparent 70%);
-            animation: float-purple 18s ease-in-out infinite, pulse 3s ease-in-out infinite 0.5s;
-        }
+      .orb-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+      }
 
-        .orb-blue {
-            width: 520px;
-            height: 520px;
-            background: radial-gradient(circle, #00BFFF 0%, rgba(0, 191, 255, 0.4) 40%, transparent 70%);
-            animation: float-blue 16s ease-in-out infinite, pulse 3.5s ease-in-out infinite 1s;
-        }
+      .orb {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(40px);
+          opacity: 0.2;
+          animation: pulse 4s ease-in-out infinite;
+      }
+
+      .orb-green {
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, #39FF14 0%, rgba(57, 255, 20, 0.4) 40%, transparent 70%);
+          animation: float-green 15s ease-in-out infinite, pulse 2.5s ease-in-out infinite;
+      }
+
+      .orb-purple {
+          width: 550px;
+          height: 550px;
+          background: radial-gradient(circle, #A020F0 0%, rgba(160, 32, 240, 0.4) 40%, transparent 70%);
+          animation: float-purple 18s ease-in-out infinite, pulse 3s ease-in-out infinite 0.5s;
+      }
+
+      .orb-blue {
+          width: 520px;
+          height: 520px;
+          background: radial-gradient(circle, #00BFFF 0%, rgba(0, 191, 255, 0.4) 40%, transparent 70%);
+          animation: float-blue 16s ease-in-out infinite, pulse 3.5s ease-in-out infinite 1s;
       }
 
       html {
         font-size: var(--font-size-base);
+        background-color: var(--bg-primary);
       }
 
       body {
@@ -107,13 +136,13 @@
         min-height: 100vh;
         overflow-x: hidden;
         position: relative;
-        background-color: var(--bg-primary);
+        background-color: transparent;
         color: var(--text-primary);
       }
       
       @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.5; }
-          50% { transform: scale(1.1); opacity: 0.7; }
+          0%, 100% { transform: scale(1); opacity: 0.2; }
+          50% { transform: scale(1.05); opacity: 0.3; }
       }
 
       @keyframes float-green {
@@ -263,12 +292,14 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "webworker": "https://aistudiocdn.com/webworker@^0.8.4"
+    "webworker": "https://aistudiocdn.com/webworker@^0.8.4",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.4.0/"
   }
 }
 </script>
 </head>
   <body>
+    <div class="light-bg-container"></div>
     <div class="orb-container">
         <div class="orb orb-green"></div>
         <div class="orb orb-purple"></div>

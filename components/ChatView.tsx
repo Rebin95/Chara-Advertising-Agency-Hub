@@ -206,12 +206,57 @@ const PromptSuggestions: React.FC<{ templates: PromptTemplate[], onSelect: (prom
     </div>
 );
 
+const resizeImage = (file: File, maxSize: number = 1024): Promise<{ file: File; dataUrl: string }> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target?.result as string;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = img;
+
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height *= maxSize / width;
+                        width = maxSize;
+                    } else {
+                        width *= maxSize / height;
+                        height = maxSize;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    return reject(new Error('Could not get canvas context'));
+                }
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const newFile = new File([blob], file.name, { type: file.type });
+                        const dataUrl = canvas.toDataURL(file.type);
+                        resolve({ file: newFile, dataUrl });
+                    } else {
+                        reject(new Error('Canvas to blob conversion failed'));
+                    }
+                }, file.type, 0.9);
+            };
+            img.onerror = reject;
+        };
+        reader.onerror = reject;
+    });
+};
+
 export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMessage, onBack, isLoading, promptTemplates, clients, speechRate, t }) => {
   const [input, setInput] = useState('');
   const [imagePreview, setImagePreview] = useState<{ dataUrl: string; file: File } | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [captionLength, setCaptionLength] = useState<'short' | 'medium' | 'long'>('medium');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -242,12 +287,20 @@ export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMes
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if ((input.trim() || imagePreview) && !isLoading) {
+      let messageToSend = input;
+
+      if (employee.role === 'Caption Writer') {
+        const lengthText = t(captionLength);
+        const promptInstruction = `Write a ${lengthText} caption for a social media post about the following topic/image.`;
+        messageToSend = `${promptInstruction}\n\n${input}`;
+      }
+      
       if (imagePreview) {
         const reader = new FileReader();
         reader.onload = (loadEvent) => {
           const base64 = (loadEvent.target?.result as string)?.split(',')[1];
           if(base64) {
-            onSendMessage(input, { base64, mimeType: imagePreview.file.type }, selectedClient ?? undefined);
+            onSendMessage(messageToSend, { base64, mimeType: imagePreview.file.type }, selectedClient ?? undefined);
             setImagePreview(null);
             setInput('');
             setSelectedClient(null);
@@ -255,7 +308,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMes
         };
         reader.readAsDataURL(imagePreview.file);
       } else {
-        onSendMessage(input, undefined, selectedClient ?? undefined);
+        onSendMessage(messageToSend, undefined, selectedClient ?? undefined);
         setInput('');
         setSelectedClient(null);
       }
@@ -265,17 +318,28 @@ export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMes
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (loadEvent) => {
-        setImagePreview({
-          dataUrl: loadEvent.target?.result as string,
-          file: file,
-        });
-      };
-      reader.readAsDataURL(file);
+        try {
+            // Resize image to prevent crashes on mobile with large files
+            const { file: resizedFile, dataUrl } = await resizeImage(file);
+            setImagePreview({
+                dataUrl: dataUrl,
+                file: resizedFile,
+            });
+        } catch (error) {
+            console.error("Error resizing image:", error);
+            // Fallback to using original file if resize fails
+            const reader = new FileReader();
+            reader.onload = (loadEvent) => {
+                setImagePreview({
+                    dataUrl: loadEvent.target?.result as string,
+                    file: file,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
     }
   };
 
@@ -296,8 +360,8 @@ export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMes
   };
 
   return (
-    <div className="dark:bg-black/50 bg-white dark:text-white text-slate-950 h-screen flex flex-col">
-      <header className="dark:bg-slate-900/80 bg-white/80 backdrop-blur-sm p-4 flex items-center justify-between border-b dark:border-slate-800 border-slate-200 sticky top-0 z-10">
+    <div className="dark:bg-black/30 bg-white/10 backdrop-filter backdrop-blur-lg dark:text-white text-slate-950 h-screen flex flex-col">
+      <header className="p-4 flex items-center justify-between border-b dark:border-slate-800/50 border-slate-200/50 sticky top-0 z-10">
         <button onClick={onBack} className="dark:text-slate-300 text-slate-600 dark:hover:text-white hover:text-slate-950 transition-colors p-2 rounded-full" aria-label={t('back')}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         </button>
@@ -337,10 +401,19 @@ export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMes
         </div>
       </main>
 
-      <footer className="p-4 dark:bg-slate-950/80 bg-white dark:border-t dark:border-slate-800 border-t border-slate-200 sticky bottom-0 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] dark:shadow-none">
+      <footer className="p-4 dark:border-t dark:border-slate-800/50 border-t border-slate-200/50 sticky bottom-0">
         {showSuggestions && !isLoading && promptTemplates.length > 0 && <PromptSuggestions templates={promptTemplates} onSelect={handlePromptSelect} />}
         
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+           {employee.role === 'Caption Writer' && (
+             <div className="flex justify-center items-center gap-2 mb-3">
+                 <div className="p-1 dark:bg-slate-800 bg-slate-200 rounded-full flex items-center gap-1 text-sm font-medium">
+                     <button type="button" onClick={() => setCaptionLength('short')} className={`px-4 py-1.5 rounded-full transition-colors ${captionLength === 'short' ? 'bg-white dark:bg-slate-700 shadow' : 'dark:text-slate-400 text-slate-600 dark:hover:bg-slate-700/60 hover:bg-white/60'}`}>{t('short')}</button>
+                     <button type="button" onClick={() => setCaptionLength('medium')} className={`px-4 py-1.5 rounded-full transition-colors ${captionLength === 'medium' ? 'bg-white dark:bg-slate-700 shadow' : 'dark:text-slate-400 text-slate-600 dark:hover:bg-slate-700/60 hover:bg-white/60'}`}>{t('medium')}</button>
+                     <button type="button" onClick={() => setCaptionLength('long')} className={`px-4 py-1.5 rounded-full transition-colors ${captionLength === 'long' ? 'bg-white dark:bg-slate-700 shadow' : 'dark:text-slate-400 text-slate-600 dark:hover:bg-slate-700/60 hover:bg-white/60'}`}>{t('long')}</button>
+                 </div>
+             </div>
+           )}
            {imagePreview && (
             <div className="relative inline-block mb-2">
               <img src={imagePreview.dataUrl} alt="Preview" className="h-24 w-auto rounded-lg" />
@@ -364,11 +437,11 @@ export const ChatView: React.FC<ChatViewProps> = ({ employee, history, onSendMes
                     value={input} onChange={handleTextareaInput}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(e); } }}
                     placeholder={`...نامەیەک بۆ ${employee.name} بنێرە`}
-                    className="w-full bg-transparent border-0 rounded-lg py-3 px-4 pr-36 resize-none focus:outline-none"
+                    className="w-full bg-transparent border-0 rounded-lg py-3 px-4 pr-28 sm:pr-36 resize-none focus:outline-none"
                     rows={1} disabled={isLoading}
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
-                    {!isLoading && promptTemplates.length > 0 && (
+                    {employee.role !== 'Caption Writer' && !isLoading && promptTemplates.length > 0 && (
                         <button 
                             type="button" 
                             onClick={() => setShowSuggestions(prev => !prev)} 

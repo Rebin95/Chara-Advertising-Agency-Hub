@@ -23,7 +23,8 @@ import { InstallView } from './components/InstallView';
 
 export type View = 'home' | 'design' | 'analyzer' | 'clients' | 'settings' | 'tasks' | 'profile' | 'install';
 
-const defaultSettings: Omit<Settings, 'theme'> = {
+const defaultSettings: Settings = {
+  theme: 'dark',
   speechRate: 1,
   fontSize: 100,
   fontFamily: "'Noto Kufi Arabic', sans-serif",
@@ -54,7 +55,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
   const [isDesignUnlocked, setIsDesignUnlocked] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [settings, setSettings] = useState<Omit<Settings, 'theme'>>(defaultSettings);
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
 
   const [robotChatHistory, setRobotChatHistory] = useState<ChatMessage[]>([]);
   const [isRobotLoading, setIsRobotLoading] = useState(false);
@@ -77,10 +78,21 @@ const App: React.FC = () => {
 
     // Settings
     try {
-      const savedSettings = localStorage.getItem('appSettings');
-      const parsedSettings = savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
-      setSettings(parsedSettings);
-      applySettings(parsedSettings);
+        const savedSettings = localStorage.getItem('appSettings');
+        const parsedSettings = savedSettings ? JSON.parse(savedSettings) : {};
+        
+        // Theme preference
+        const savedTheme = localStorage.getItem('theme') as Settings['theme'] | null;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+        const loadedSettings = {
+            ...defaultSettings,
+            ...parsedSettings,
+            theme: initialTheme,
+        };
+        setSettings(loadedSettings);
+        applySettings(loadedSettings);
     } catch (error) {
       console.error("Failed to parse settings from localStorage", error);
     }
@@ -103,7 +115,7 @@ const App: React.FC = () => {
 
   }, []);
 
-  const applySettings = (s: Omit<Settings, 'theme'>) => {
+  const applySettings = (s: Settings) => {
     const root = document.documentElement;
     root.style.setProperty('--font-size-base', `${s.fontSize / 100 * 16}px`);
     document.body.style.setProperty('--font-family-base', s.fontFamily);
@@ -119,7 +131,16 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-        localStorage.setItem('appSettings', JSON.stringify(settings));
+        const { theme, ...otherSettings } = settings;
+        localStorage.setItem('appSettings', JSON.stringify(otherSettings));
+        localStorage.setItem('theme', theme);
+        
+        const root = document.documentElement;
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
         applySettings(settings);
     }
   }, [settings, isAuthenticated]);
@@ -131,6 +152,10 @@ const App: React.FC = () => {
   const t = useCallback((key: string): string => {
     return translations[settings.language][key] || key;
   }, [settings.language]);
+  
+  const handleThemeToggle = () => {
+    setSettings(prev => ({ ...prev, theme: prev.theme === 'light' ? 'dark' : 'light'}));
+  };
 
   // Set initial greeting for Chara Robot
   useEffect(() => {
@@ -414,13 +439,19 @@ const App: React.FC = () => {
     <>
       <div className="min-h-screen p-4 sm:p-6 lg:p-8 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <Header onNavigate={handleNavigate} activeView={activeView} t={t} />
+          <Header 
+            onNavigate={handleNavigate} 
+            activeView={activeView} 
+            t={t} 
+            theme={settings.theme}
+            onThemeToggle={handleThemeToggle}
+          />
           {view === 'home' && renderHomeView()}
           {view === 'analyzer' && <AnalyzerView onBack={() => setView('home')} t={t} />}
           {view === 'clients' && renderClientsView()}
           {view === 'tasks' && <TaskView onBack={() => setView('home')} clients={clients} taskProgress={taskProgress} onProgressChange={handleProgressChange} t={t} />}
           {view === 'profile' && <ProfileView onBack={() => setView('home')} profile={userProfile} onSave={handleUpdateProfile} t={t} />}
-          {view === 'settings' && <SettingsView onBack={() => setView('home')} settings={settings} onSettingsChange={setSettings} t={t} />}
+          {view === 'settings' && <SettingsView onBack={() => setView('home')} settings={settings} onSettingsChange={(newSettings) => setSettings(s => ({ ...s, ...newSettings }))} t={t} />}
           {view === 'install' && <InstallView onBack={() => setView('home')} t={t} />}
         </div>
       </div>

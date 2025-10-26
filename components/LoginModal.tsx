@@ -28,7 +28,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLogin, t }) => {
             </h1>
         </div>
         <div 
-          className="dark:bg-black/50 backdrop-blur-md bg-white/10 rounded-xl shadow-2xl w-full"
+          className="dark:bg-black/30 bg-white/10 backdrop-filter backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl w-full"
         >
           <form onSubmit={handleSubmit} className="p-8">
             <h3 className="text-xl font-bold text-white mb-4 text-center">{t('loginTitle')}</h3>

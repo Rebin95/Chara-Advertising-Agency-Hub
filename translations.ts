@@ -60,9 +60,10 @@ export const translations: Record<string, Record<string, string>> = {
     kurdishTranslation: 'وەرگێڕانی کوردی',
     arabicTranslation: 'وەرگێڕانی عەرەبی',
     englishTranslation: 'وەرگێڕانی ئینگلیزی',
-    // Summarizer Options
+    // Summarizer and Caption options
     short: 'کورت',
     medium: 'ناوەند',
+    long: 'درێژ',
     detailed: 'ورد',
     // Settings
     settingsTitle: 'ڕێکخستنەکان',
@@ -112,6 +113,10 @@ export const translations: Record<string, Record<string, string>> = {
     sponsorship: 'سپۆنسەر',
     spent: 'خەرجکراو',
     amountSpent: 'بڕی خەرجکراو',
+    listView: 'لیست',
+    chartView: 'چارت',
+    overallProgress: 'پێشکەوتنی گشتی',
+    progressByClient: 'پێشکەوتن بەپێی کڕیار',
     // Install
     installTitle: 'دابەزاندنی ئەپ',
     installSubtitle: 'بۆ ئەوەی وەک ئەپێکی سەربەخۆ لەسەر کۆمپیوتەرەکەت بەکاری بهێنیت',
@@ -183,9 +188,10 @@ export const translations: Record<string, Record<string, string>> = {
     kurdishTranslation: 'Kurdish Translation',
     arabicTranslation: 'Arabic Translation',
     englishTranslation: 'English Translation',
-    // Summarizer Options
+    // Summarizer and Caption options
     short: 'Short',
     medium: 'Medium',
+    long: 'Long',
     detailed: 'Detailed',
     // Settings
     settingsTitle: 'Settings',
@@ -235,6 +241,10 @@ export const translations: Record<string, Record<string, string>> = {
     sponsorship: 'Sponsorship',
     spent: 'Spent',
     amountSpent: 'Amount spent',
+    listView: 'List',
+    chartView: 'Chart',
+    overallProgress: 'Overall Progress',
+    progressByClient: 'Progress by Client',
     // Install
     installTitle: 'Install App',
     installSubtitle: 'Use the Hub as a standalone desktop application',
@@ -306,9 +316,10 @@ export const translations: Record<string, Record<string, string>> = {
     kurdishTranslation: 'الترجمة الكردية',
     arabicTranslation: 'الترجمة العربية',
     englishTranslation: 'الترجمة الإنجليزية',
-    // Summarizer Options
+    // Summarizer and Caption options
     short: 'قصير',
     medium: 'متوسط',
+    long: 'طويل',
     detailed: 'مفصل',
     // Settings
     settingsTitle: 'الإعدادات',
@@ -358,6 +369,10 @@ export const translations: Record<string, Record<string, string>> = {
     sponsorship: 'الرعاية',
     spent: 'المصروف',
     amountSpent: 'المبلغ المصروف',
+    listView: 'قائمة',
+    chartView: 'مخطط',
+    overallProgress: 'التقدم العام',
+    progressByClient: 'التقدم حسب العميل',
     // Install
     installTitle: 'تثبيت التطبيق',
     installSubtitle: 'لاستخدامه كتطبيق مستقل على جهاز الكمبيوتر الخاص بك',

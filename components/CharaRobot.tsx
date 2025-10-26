@@ -68,7 +68,7 @@ export const CharaRobot: React.FC<CharaRobotProps> = ({ history, onSendMessage, 
             >
                 <div 
                     onClick={e => e.stopPropagation()}
-                    className={`fixed bottom-0 right-0 m-0 sm:m-6 dark:bg-black/50 bg-white/80 backdrop-blur-md rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md h-[80vh] sm:h-[70vh] flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+                    className={`fixed bottom-0 right-0 m-0 sm:m-6 dark:bg-slate-900/40 bg-white/40 backdrop-filter backdrop-blur-xl border dark:border-slate-700 border-slate-200 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md h-[80vh] sm:h-[70vh] flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="chara-robot-title"

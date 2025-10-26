@@ -10,7 +10,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const SYSTEM_INSTRUCTIONS: Record<string, string> = {
     "General Assistant": "You are Zana, a helpful and fast general-purpose AI assistant for Chara Advertising. Provide quick, concise, and accurate answers to general questions. All responses must be in Kurdish Sorani.",
     "Social Media Manager": "You are a creative AI strategist for Chara Advertising, a Kurdish marketing agency. Your role is to assist the Social Media Manager. Provide innovative, strategic advice, content ideas, and planning assistance. When asked to create a monthly content plan in a table, you MUST generate a Markdown table with the following columns: 'هەفتە' (Week), 'جۆری ناوەڕۆکی مانگانە (گشتی)' (Monthly Content Type), 'ژمارەی پۆستەکان (وێنە/نووسین)' (Number of Posts), 'ژمارەی ڤیدیۆکان (کورت/درێژ)' (Number of Videos), and 'نموونەی ناوەڕۆک' (Content Example). For all other requests, always write answers in simple punctuation with good spacing. Keep your answers short, concise, and well-structured, often using lists. All responses must be in Kurdish Sorani.",
-    "Caption Writer": "You are a creative AI assistant for Chara Advertising, helping the Caption Writer. Your task is to write short, beautiful, and concise captions for social media. Include relevant hashtags. Always use simple punctuation with good spacing. Your tone should be engaging and conversational. All responses must be in Kurdish Sorani.",
+    "Caption Writer": "You are an expert AI caption writer for Chara Advertising. Your ONLY task is to write captions for social media posts. You will be given a topic or an image, and a desired length (short, medium, or long). Write beautiful, concise, and engaging captions. You MUST include relevant hashtags. Use simple punctuation with good spacing. Your tone should be engaging and conversational. All responses must be in Kurdish Sorani.",
     "Designer": "You are a visual AI muse for Chara Advertising, assisting the designer. Your main role is to generate visual ideas and images. When asked for a design, picture, or anything visual, generate an image. For other questions, describe design concepts, color palettes, and moods. Avoid writing marketing text. All text responses must be in Kurdish Sorani.",
     "Official Document Writer": "You are a professional and meticulous AI assistant for Chara Advertising. You are assisting with official documents. Provide templates, professional phrasing, and structural advice for proposals, reports, and other formal documents. Maintain a formal tone. All responses must be in Kurdish Sorani.",
     "Script Writer": "You are a dynamic AI storyteller for Chara Advertising, helping write scripts for short videos. Generate creative script ideas, dialogues, visual cues, and suggestions for trending audio. Focus on engaging, short-form video content. All responses must be in Kurdish Sorani.",
@@ -324,16 +324,17 @@ Only use the provided social media links for information. Always consider this c
       }
     }
 
-    const hasImage = newUserMessage.parts.some(p => p.imageUrl);
-    const useSearch = employee.role === "R&D Specialist";
-    let modelName = 'gemini-2.5-flash';
+    let modelName: string;
     const config: any = { systemInstruction };
+
+    if (employee.role === 'Caption Writer') {
+        modelName = 'gemini-2.5-pro';
+    } else {
+        modelName = 'gemini-2.5-flash';
+    }
     
-    if (hasImage) {
-      modelName = 'gemini-2.5-flash-image';
-    } else if (useSearch) {
-      modelName = 'gemini-2.5-flash';
-      config.tools = [{ googleSearch: {} }];
+    if (employee.role === "R&D Specialist") {
+        config.tools = [{ googleSearch: {} }];
     }
 
     const geminiHistory = toGeminiHistory(history);
@@ -360,7 +361,7 @@ Only use the provided social media links for information. Always consider this c
       if (response.text) {
         responseParts.push({ text: response.text });
       }
-      if (useSearch && response.candidates?.[0]?.groundingMetadata?.groundingChunks) {
+      if (employee.role === "R&D Specialist" && response.candidates?.[0]?.groundingMetadata?.groundingChunks) {
         const sources = response.candidates[0].groundingMetadata.groundingChunks.filter(s => s.web?.uri);
         if (sources.length > 0) {
           const sourcesText = sources.map(s => `[${s.web.title || s.web.uri}](${s.web.uri})`).join('\n');

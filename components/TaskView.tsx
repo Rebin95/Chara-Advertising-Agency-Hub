@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { Client, TaskProgress } from '../types';
-import { PdfIcon, WhatsAppIcon, PostIcon, VideoIcon, SponsorshipIcon, VisitingIcon, StoriesIcon } from './icons';
+import { PdfIcon, WhatsAppIcon, PostIcon, VideoIcon, SponsorshipIcon, VisitingIcon, StoriesIcon, ListIcon, ChartIcon } from './icons';
+import { TaskCharts } from './TaskCharts';
+
 
 interface TaskViewProps {
   onBack: () => void;
@@ -101,7 +103,7 @@ const TaskCard: React.FC<{ client: Client, progress: TaskProgress['key'][number]
 
 
     return (
-        <div className="dark:bg-slate-900/50 bg-white rounded-2xl shadow-md p-6 border dark:border-slate-800 border-slate-200 task-card-print">
+        <div className="backdrop-filter backdrop-blur-xl dark:bg-slate-900/30 bg-white/30 rounded-2xl shadow-md p-6 border dark:border-slate-700 border-slate-200 task-card-print">
             <h3 className="text-xl font-bold dark:text-white text-slate-950 mb-4">{client.name}</h3>
             <div className="space-y-4">
                  {totalVideos > 0 && (
@@ -217,6 +219,7 @@ const TaskCard: React.FC<{ client: Client, progress: TaskProgress['key'][number]
 
 export const TaskView: React.FC<TaskViewProps> = ({ onBack, clients, taskProgress, onProgressChange, t }) => {
     const [selectedMonth, setSelectedMonth] = useState(getCurrentYearMonth());
+    const [tasksViewMode, setTasksViewMode] = useState<'list' | 'chart'>('list');
 
     const currentMonthKey = getCurrentYearMonth();
     const availableMonths = Object.keys(taskProgress).sort((a, b) => b.localeCompare(a));
@@ -260,8 +263,8 @@ export const TaskView: React.FC<TaskViewProps> = ({ onBack, clients, taskProgres
     };
 
     return (
-        <div className="dark:bg-black/50 bg-white dark:text-white text-slate-950 min-h-screen flex flex-col -m-4 sm:-m-6 lg:-m-8">
-            <header className="dark:bg-slate-900/80 bg-white/80 backdrop-blur-sm p-4 flex items-center justify-between border-b dark:border-slate-800 border-slate-200 sticky top-0 z-10 no-print">
+        <div className="dark:bg-transparent bg-transparent dark:text-white text-slate-950 min-h-screen flex flex-col -m-4 sm:-m-6 lg:-m-8">
+            <header className="dark:bg-slate-900/40 bg-white/40 backdrop-filter backdrop-blur-xl p-4 flex items-center justify-between border-b dark:border-slate-800 border-slate-200 sticky top-0 z-10 no-print">
                 <button onClick={onBack} className="dark:text-slate-300 text-slate-600 dark:hover:text-white hover:text-slate-950 transition-colors p-2 rounded-full" aria-label={t('back')}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
@@ -270,13 +273,25 @@ export const TaskView: React.FC<TaskViewProps> = ({ onBack, clients, taskProgres
                         <h1 className="text-xl font-bold">{t('tasksTitle')}</h1>
                         <p className="text-sm dark:text-[var(--text-accent)] text-[var(--text-accent)]">{t('tasksSubtitle')}</p>
                     </div>
-                    <select
-                        value={selectedMonth}
-                        onChange={e => setSelectedMonth(e.target.value)}
-                        className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 border rounded-lg py-1 px-3 focus:outline-none focus:ring-2 focus:ring-[var(--text-accent)] text-sm"
-                    >
-                        {availableMonths.map(month => <option key={month} value={month}>{formatMonthForDisplay(month)}</option>)}
-                    </select>
+                     <div className="flex items-center gap-4">
+                        <select
+                            value={selectedMonth}
+                            onChange={e => setSelectedMonth(e.target.value)}
+                            className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 border rounded-lg py-1 px-3 focus:outline-none focus:ring-2 focus:ring-[var(--text-accent)] text-sm"
+                        >
+                            {availableMonths.map(month => <option key={month} value={month}>{formatMonthForDisplay(month)}</option>)}
+                        </select>
+                        <div className="p-1 dark:bg-slate-900 bg-slate-100 rounded-full flex items-center gap-1">
+                            <button onClick={() => setTasksViewMode('list')} className={`flex items-center gap-1.5 px-3 py-1 text-sm rounded-full transition-colors ${tasksViewMode === 'list' ? 'bg-white dark:bg-slate-700 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'}`}>
+                                <ListIcon />
+                                <span>{t('listView')}</span>
+                            </button>
+                            <button onClick={() => setTasksViewMode('chart')} className={`flex items-center gap-1.5 px-3 py-1 text-sm rounded-full transition-colors ${tasksViewMode === 'chart' ? 'bg-white dark:bg-slate-700 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'}`}>
+                                <ChartIcon />
+                                <span>{t('chartView')}</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div className="flex items-center gap-1">
                     <button onClick={handleWhatsAppShare} className="p-2 rounded-full transition-colors dark:text-slate-400 text-slate-600 dark:hover:bg-slate-800/60 dark:hover:text-white hover:bg-slate-100/60 hover:text-slate-950" aria-label="Share on WhatsApp">
@@ -292,18 +307,24 @@ export const TaskView: React.FC<TaskViewProps> = ({ onBack, clients, taskProgres
                     <h1>{t('tasksReportFor')} {formatMonthForDisplay(selectedMonth)}</h1>
                     <p>Chara Advertising Hub</p>
                 </div>
-                <div className="max-w-4xl mx-auto grid grid-cols-1 gap-4 task-grid-print">
-                    {clients.map(client => (
-                        <TaskCard 
-                            key={client.id} 
-                            client={client} 
-                            progress={taskProgress[selectedMonth]?.[client.id]}
-                            isEditable={isEditable}
-                            onProgressChange={isEditable ? (taskType, newCount) => onProgressChange(client.id, taskType, newCount) : undefined}
-                            t={t}
-                        />
-                    ))}
-                </div>
+                {tasksViewMode === 'list' ? (
+                    <div className="max-w-4xl mx-auto grid grid-cols-1 gap-4 task-grid-print">
+                        {clients.map(client => (
+                            <TaskCard 
+                                key={client.id} 
+                                client={client} 
+                                progress={taskProgress[selectedMonth]?.[client.id]}
+                                isEditable={isEditable}
+                                onProgressChange={isEditable ? (taskType, newCount) => onProgressChange(client.id, taskType, newCount) : undefined}
+                                t={t}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="no-print">
+                        <TaskCharts clients={clients} progressData={taskProgress[selectedMonth] || {}} t={t} />
+                    </div>
+                )}
             </main>
         </div>
     );

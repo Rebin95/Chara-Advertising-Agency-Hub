@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Client } from '../types';
+import { FacebookIcon, InstagramIcon, TikTokIcon } from './icons';
 
 interface ClientInfoModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export const ClientInfoModal: React.FC<ClientInfoModalProps> = ({ isOpen, onClos
       aria-labelledby="client-modal-title"
     >
       <div 
-        className="dark:bg-black/50 backdrop-blur-md bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+        className="dark:bg-slate-900/40 bg-white/40 backdrop-filter backdrop-blur-xl border dark:border-slate-700 border-slate-200 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-4 border-b dark:border-slate-700 border-slate-200">
@@ -59,9 +60,21 @@ export const ClientInfoModal: React.FC<ClientInfoModalProps> = ({ isOpen, onClos
               <div>
                 <h4 className="font-semibold dark:text-[#28c780] text-[#1f9a65]">پەیجەکانی سۆشیاڵ میدیا</h4>
                 <div className="flex flex-wrap gap-4 mt-2">
-                    {client.pages.facebook && <a href={client.pages.facebook} target="_blank" rel="noopener noreferrer" className="dark:text-green-400 text-green-600 hover:underline">فەیسبووک</a>}
-                    {client.pages.instagram && <a href={client.pages.instagram} target="_blank" rel="noopener noreferrer" className="dark:text-green-400 text-green-600 hover:underline">ئینستاگرام</a>}
-                    {client.pages.tiktok && <a href={client.pages.tiktok} target="_blank" rel="noopener noreferrer" className="dark:text-green-400 text-green-600 hover:underline">تیکتۆک</a>}
+                    {client.pages.facebook && (
+                        <a href={client.pages.facebook} target="_blank" rel="noopener noreferrer" className="dark:text-slate-300 text-slate-600 dark:hover:text-[#28c780] hover:text-[#1f9a65] transition-colors" aria-label="Facebook">
+                            <FacebookIcon />
+                        </a>
+                    )}
+                    {client.pages.instagram && (
+                        <a href={client.pages.instagram} target="_blank" rel="noopener noreferrer" className="dark:text-slate-300 text-slate-600 dark:hover:text-[#28c780] hover:text-[#1f9a65] transition-colors" aria-label="Instagram">
+                            <InstagramIcon />
+                        </a>
+                    )}
+                    {client.pages.tiktok && (
+                        <a href={client.pages.tiktok} target="_blank" rel="noopener noreferrer" className="dark:text-slate-300 text-slate-600 dark:hover:text-[#28c780] hover:text-[#1f9a65] transition-colors" aria-label="TikTok">
+                            <TikTokIcon />
+                        </a>
+                    )}
                 </div>
               </div>
             )}

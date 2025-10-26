@@ -83,7 +83,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
     >
       <form 
         onSubmit={handleSubmit}
-        className="dark:bg-black/50 backdrop-blur-md bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+        className="dark:bg-slate-900/40 bg-white/40 backdrop-filter backdrop-blur-xl border dark:border-slate-700 border-slate-200 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-4 border-b dark:border-slate-700 border-slate-200">

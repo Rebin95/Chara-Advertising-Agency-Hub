@@ -5,7 +5,7 @@ import { ManagerIcon, CaptionIcon, DesignIcon, DocsIcon, ScriptIcon, NewsIcon, M
 export const EMPLOYEES: Employee[] = [
   {
     id: 1,
-    name: "Social Media Manager",
+    name: "بەڕێوەبەری سۆشیاڵ میدیا",
     role: "Social Media Manager",
     roleKurdish: "بەڕێوەبەری سۆشیاڵ میدیا",
     description: "ڕێکخستنی پلانی کڕیارەکان بۆ فەیسبووک و ئینستاگرام و تیکتۆک.",
@@ -13,7 +13,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 2,
-    name: "Caption Writer",
+    name: "کاپشن نووس",
     role: "Caption Writer",
     roleKurdish: "نووسەری کاپشن",
     description: "نووسینی کاپشنی کورت و جوان بۆ سۆشیاڵ میدیا بە شێوەیەکی کورت و پوخت.",
@@ -21,7 +21,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 3,
-    name: "Designer",
+    name: "دیزاینەر",
     role: "Designer",
     roleKurdish: "دیزاینەر",
     description: "کاری دیزاین دەکات و هیچ دەقێک نانووسێت.",
@@ -29,7 +29,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 4,
-    name: "Document Author",
+    name: "دۆکۆمێنت نووس",
     role: "Official Document Writer",
     roleKurdish: "نووسەری بەڵگەنامە فەرمییەکان",
     description: "بەرپرسە لە نووسینی بەڵگەنامە فەرمیەکان، پێشنیارنامە و دۆکیومێntەکان.",
@@ -37,7 +37,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 5,
-    name: "Script Writer",
+    name: "سیناریۆ نووس",
     role: "Script Writer",
     roleKurdish: "نووسەری سکریپت",
     description: "تەنها ئەرکی نووسینی سکریپتە بۆ کورتە ڤیدیۆ و ڕیڵز.",
@@ -45,7 +45,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 6,
-    name: "Marketing Developer",
+    name: "گەشەپێدەری بازاڕ",
     role: "R&D Specialist",
     roleKurdish: "پسپۆڕی توێژینەوە و گەشەپێدان",
     description: "هێنانی هەواڵی نوێ دەربارەی کار و AI نوێ بۆ ئاسانکاری کارەکانی ئاژانس.",
@@ -53,7 +53,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 7,
-    name: "Medical Article Writer",
+    name: "نوسەری بابەتی تەندروستی",
     role: "Medical Article Writer",
     roleKurdish: "نووسەری بابەتی پزیشکی",
     description: "ئەرکی نووسینی وتاری پزیشکییە بۆ سۆشیاڵ میدیا.",
@@ -61,7 +61,7 @@ export const EMPLOYEES: Employee[] = [
   },
   {
     id: 8,
-    name: "General Assistant",
+    name: "یاریدەدەری گشتی",
     role: "General Assistant",
     roleKurdish: "یاریدەدەری گشتی",
     description: "پرسیاری گشتی بکە و وەڵامی خێرا وەربگرە. بۆ یارمەتی خێرا و ئاسان.",

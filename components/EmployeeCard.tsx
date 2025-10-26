@@ -10,7 +10,7 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onSelect }
   return (
     <div 
       onClick={() => onSelect(employee)}
-      className="dark:bg-slate-900/50 bg-white rounded-2xl shadow-md p-6 flex flex-col h-full transition-all duration-300 hover:scale-105 border dark:border-slate-800 border-slate-200 hover:border-[#1f9a65] cursor-pointer group hover:shadow-xl"
+      className="backdrop-filter backdrop-blur-xl dark:bg-slate-900/30 bg-white/30 rounded-2xl shadow-md p-6 flex flex-col h-full transition-all duration-300 hover:scale-105 border dark:border-slate-700 border-slate-200 hover:border-[#1f9a65] cursor-pointer group hover:shadow-xl"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(employee)}

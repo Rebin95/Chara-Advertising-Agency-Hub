@@ -284,8 +284,8 @@ export const AnalyzerView: React.FC<AnalyzerViewProps> = ({ onBack, t }) => {
 
 
     return (
-        <div className="dark:bg-black/50 bg-white dark:text-white text-slate-950 min-h-screen flex flex-col -m-4 sm:-m-6 lg:-m-8">
-            <header className="dark:bg-slate-900/80 bg-white/80 backdrop-blur-sm p-4 flex items-center justify-between border-b dark:border-slate-800 border-slate-200 sticky top-0 z-10">
+        <div className="dark:bg-transparent bg-transparent dark:text-white text-slate-950 min-h-screen flex flex-col -m-4 sm:-m-6 lg:-m-8">
+            <header className="dark:bg-slate-900/40 bg-white/40 backdrop-filter backdrop-blur-xl p-4 flex items-center justify-between border-b dark:border-slate-800 border-slate-200 sticky top-0 z-10">
                 <button onClick={onBack} className="dark:text-slate-300 text-slate-600 dark:hover:text-white hover:text-slate-950 transition-colors p-2 rounded-full" aria-label={t('back')}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
@@ -314,7 +314,7 @@ export const AnalyzerView: React.FC<AnalyzerViewProps> = ({ onBack, t }) => {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder={t('pasteTextHere')}
-                                className="w-full flex-grow dark:bg-slate-800 bg-slate-50 dark:border-slate-700 border-slate-200 border rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#1f9a65] transition-shadow min-h-[250px]"
+                                className="w-full flex-grow dark:bg-slate-800/50 bg-slate-50/50 dark:border-slate-700 border-slate-200 border rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#1f9a65] transition-shadow min-h-[250px]"
                                 disabled={isLoading || isOcrLoading}
                             />
                             {isOcrLoading && <div className="absolute inset-0 bg-slate-800/50 flex items-center justify-center rounded-lg"><p>{t('extractingText')}</p></div>}
@@ -331,7 +331,7 @@ export const AnalyzerView: React.FC<AnalyzerViewProps> = ({ onBack, t }) => {
                     </div>
 
                     {/* Output Column */}
-                    <div className="relative min-h-[400px] dark:bg-slate-800/50 bg-white border dark:border-slate-800 border-slate-200 rounded-xl shadow-inner">
+                    <div className="relative min-h-[400px] backdrop-filter backdrop-blur-xl dark:bg-slate-900/30 bg-white/30 border dark:border-slate-700 border-slate-200 rounded-xl shadow-inner">
                         <div className="p-6 h-full overflow-y-auto">
                             {renderResult()}
                         </div>

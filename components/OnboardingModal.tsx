@@ -20,7 +20,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ onSave, t }) =
   return (
     <div className="fixed inset-0 bg-slate-900 bg-opacity-90 flex items-center justify-center z-50 p-4">
       <div 
-        className="dark:bg-black/50 backdrop-blur-md bg-white/10 rounded-xl shadow-2xl w-full max-w-md"
+        className="dark:bg-black/30 bg-white/10 backdrop-filter backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl w-full max-w-md"
       >
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="text-center">

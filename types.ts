@@ -65,6 +65,7 @@ export interface NewsItem {
 }
 
 export interface Settings {
+  theme: 'light' | 'dark';
   speechRate: number;
   fontSize: number;
   fontFamily: string;
